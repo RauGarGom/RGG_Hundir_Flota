@@ -1,21 +1,29 @@
 import utils as ut
+### Variables generales
+acierto = False ### Para la recursividad del turno. Se vuelve True si def disparar acierta
+jugador = 0
+turnos = 1
 
-#Acierto = False
+##INICIO
+### ¿Queremos hacer trampas?
+trampas = (str(input('¡Hola! ¿Te gusta hacer trampas? (Responde "SI" o "NO"): ')))
+if trampas == "SI":
+    trampas = True
+else:
+    trampas = False
 
-### Pruebas crear tablero
+### Creamos 3 tableros
 tablero_user = ut.crear_tablero()
 tablero_rival = ut.crear_tablero()
+tablero_rival_oc = ut.crear_tablero()
 
-### Pruebas generar barcos
+### Generamos 2 listas de barcos
 barcos_user = ut.generar_barcos(tablero_user)
 barcos_rival = ut.generar_barcos(tablero_rival)
-# print(tablero_user)
-# print(barcos_user)
 
-
-### Pruebas colocar barcos
+### Colocamos los barcos en sus respectivos tableros
 tablero_user = ut.colocar_barcos(barcos_user,tablero_user)
 tablero_rival = ut.colocar_barcos(barcos_rival,tablero_rival)
 
 ### Pruebas turnos
-ut.turnos(tablero_user,tablero_rival)
+ut.turnos(tablero_user,tablero_rival,tablero_rival_oc,jugador,turnos)

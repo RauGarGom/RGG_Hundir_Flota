@@ -2,24 +2,34 @@ import numpy as np
 import random as rd
 
 ###Variables generales
-Acierto = False ### Para la recursividad del turno. Se vuelve True si def disparar acierta
+acierto = False ### Para la recursividad del turno. Se vuelve True si def disparar acierta
+
 
 def crear_tablero(largo = 10):
     tablero = np.full ((largo,largo), "_")
     return(tablero)
 
-def disparar(casilla, tablero):
+def disparar(casilla,tablero,tablero_oc,jugador):
+    tr_jugador = jugador
+    print("tr_jugador", tr_jugador)
     if tablero[casilla] == "O":
         print("Tocado")
+        acierto = True
+        rep_tiro = False
         tablero[casilla] = "X"
-        Acierto = True
-        print("¿Acierto?",Acierto)
+        if tr_jugador == 0:
+            tablero_oc[casilla] = "X"
+    elif tablero[casilla] == "X" or tablero[casilla] == "A": ###TODO: Seguro que se puede poner más bonito
+        print("¡Ya has disparado ahí! Vuelve a probar")
+        rep_tiro = True
+        acierto = False
     else:
         print("Agua")
         tablero[casilla] = "A"
-        Acierto = False
-        print("¿Acierto?",Acierto)
-    return tablero
+        tablero_oc[casilla] = "A"
+        acierto = False
+        rep_tiro = False
+    return [tablero, acierto, rep_tiro, tablero_oc] ### Lista para poder seleccionar qué valor quiero cuando la llame
 
 def crear_barco(eslora):
     casilla_0 = (rd.randint(0,9), rd.randint(0,9))
@@ -67,17 +77,6 @@ def generar_barcos(tablero):
                         celdas_usadas.append(barcos[j][k])      
     return barcos
 
-###TODO: Borrar??
-# def colocar_barcos(barcos,tablero):
-#     ### Ya tenemos los barcos creados. Los colocamos
-#     for indice,casilla in enumerate(barcos):
-#         for casilla in barcos[indice]:
-#             try:
-#                 tablero[casilla] = "O"
-#             except:
-#                 colocar_barcos(barcos,tablero)
-#     return(tablero)
-
 ##TODO: Por alguna razón, he tenido que meter el casilla -1. Eso hace que haya barcos que no se generen. Cuidado con el loop del diablo
 def colocar_barcos(barcos,tablero):
     ### Ya tenemos los barcos creados. Los colocamos. Revisamos la fila y la columna de cada uno, y si no se encuentra, ponemos una "O"
@@ -98,24 +97,38 @@ def colocar_barcos(barcos,tablero):
         return tablero
 
 
-###TODO Sistema de turnos. Falta recursividad en turnos (acierto = sigue turno), quitar disparos ya utilizados por CPU
+
 ###TODO Ocultar tablero de rival
 ###TODO Finalizar la partida (count(O) == 0 en algún tablero)
 ###TODO Meter tiempo para que sea algo mejor
-def turnos(tablero_us,tablero_rv):
-    jugador = 0
-    turnos = 1
-    while turnos <= 10: ###TODO: Quitar cuando tengamos final
+def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos):
+    us_punt = 0
+    rv_punt = 0
+    while us_punt < 5 and rv_punt < 5: ###TODO: Quitar cuando tengamos final
+        print("--------------")
         print("Turno:", turnos)
-        if jugador == 0:
+        if jugador == 0: ## Es decir, si es turno del usuario
             print("Turno del jugador")
             print("Tablero del rival:")
             print(tablero_rv)
+            print("Tablero oculto del rival")
+            print(tablero_rv_oc)
             us_fila = int(input("Introduce la fila: "))
             us_columna = int(input("Introduce la columna: "))
             us_coord = (us_fila-1,us_columna-1) ### Nadie se refiere a la primera fila y columna como 0,0
-            tablero_rv = disparar(us_coord,tablero_rv)
-            if Acierto == False: ### Se vuelve True cuando se acierta, y False cuando se falla
+            resultado_us = disparar(us_coord,tablero_rv,tablero_rv_oc,jugador) ### Me guardo todos los resultados de la lista de disparar
+            tablero_rv = resultado_us[0]
+            acierto = resultado_us[1]
+            rep_tiro = resultado_us[2]
+            if acierto == True: ### Se vuelve True cuando se acierta, y False cuando se falla
+                jugador = 0
+                turnos = turnos
+                us_punt += 1
+                print("Puntuación del jugador", us_punt)
+            elif rep_tiro == True: ### Se vuelve True cuando se apunta a una X o una A
+                jugador = 0
+                turnos = turnos
+            else:
                 jugador = 1
                 turnos += 1
         else:
@@ -124,10 +137,23 @@ def turnos(tablero_us,tablero_rv):
             rv_columna = rd.randint(0,9)
             rv_coord = (rv_fila,rv_columna)
             print("El ordenador dispara a",rv_coord)
-            tablero_us = disparar(rv_coord,tablero_us)
+            resultado_rv = disparar(rv_coord,tablero_us,tablero_rv_oc,jugador)
+            tablero_us = resultado_rv[0]
+            acierto = resultado_rv[1]
+            rep_tiro = resultado_us[2]
             print(tablero_us)
-            if Acierto == False:
+            if acierto == True or rep_tiro == True:
+                jugador = 1
+                turnos = turnos
+                rv_punt += 1
+                print("Puntuación del ordenador",rv_punt)
+            elif rep_tiro == True:
+                jugador = 1
+                turnos = turnos
+            else:
                 jugador = 0
                 turnos += 1
     else:
-        print("Final del juego!")
+        print("="*50)
+        print("¡Final del juego! Dame más tiempo para mejorarlo si te ha gustado :D")
+        print("="*50)
