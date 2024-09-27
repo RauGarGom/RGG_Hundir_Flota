@@ -11,7 +11,6 @@ def crear_tablero(largo = 10):
 
 def disparar(casilla,tablero,tablero_oc,jugador):
     tr_jugador = jugador
-    print("tr_jugador", tr_jugador)
     if tablero[casilla] == "O":
         print("Tocado")
         acierto = True
@@ -26,7 +25,8 @@ def disparar(casilla,tablero,tablero_oc,jugador):
     else:
         print("Agua")
         tablero[casilla] = "A"
-        tablero_oc[casilla] = "A"
+        if tr_jugador == 0:
+            tablero_oc[casilla] = "A"
         acierto = False
         rep_tiro = False
     return [tablero, acierto, rep_tiro, tablero_oc] ### Lista para poder seleccionar qué valor quiero cuando la llame
@@ -98,21 +98,23 @@ def colocar_barcos(barcos,tablero):
 
 
 
-###TODO Ocultar tablero de rival
-###TODO Finalizar la partida (count(O) == 0 en algún tablero)
+
 ###TODO Meter tiempo para que sea algo mejor
-def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos):
+def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos,trampas):
+    trampa = trampas
     us_punt = 0
     rv_punt = 0
-    while us_punt < 5 and rv_punt < 5: ###TODO: Quitar cuando tengamos final
+    while us_punt < 5 and rv_punt < 5:
         print("--------------")
         print("Turno:", turnos)
         if jugador == 0: ## Es decir, si es turno del usuario
             print("Turno del jugador")
-            print("Tablero del rival:")
-            print(tablero_rv)
-            print("Tablero oculto del rival")
-            print(tablero_rv_oc)
+            if trampa == True:
+                print("Tablero del rival:")
+                print(tablero_rv)
+            else:
+                print("Tablero oculto del rival:")
+                print(tablero_rv_oc)
             us_fila = int(input("Introduce la fila: "))
             us_columna = int(input("Introduce la columna: "))
             us_coord = (us_fila-1,us_columna-1) ### Nadie se refiere a la primera fila y columna como 0,0
@@ -124,7 +126,7 @@ def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos):
                 jugador = 0
                 turnos = turnos
                 us_punt += 1
-                print("Puntuación del jugador", us_punt)
+                print("Tu puntuación:", us_punt)
             elif rep_tiro == True: ### Se vuelve True cuando se apunta a una X o una A
                 jugador = 0
                 turnos = turnos
@@ -146,7 +148,7 @@ def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos):
                 jugador = 1
                 turnos = turnos
                 rv_punt += 1
-                print("Puntuación del ordenador",rv_punt)
+                print("Puntuación del ordenador:",rv_punt)
             elif rep_tiro == True:
                 jugador = 1
                 turnos = turnos
@@ -154,6 +156,11 @@ def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos):
                 jugador = 0
                 turnos += 1
     else:
+        print("="*50)
+        if us_punt > rv_punt:
+            print("¡¡ENHORABUENA!! Has ganado")
+        else:
+            print("¡Has perdido! Suerte la próxima vez")
         print("="*50)
         print("¡Final del juego! Dame más tiempo para mejorarlo si te ha gustado :D")
         print("="*50)

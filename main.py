@@ -6,11 +6,11 @@ turnos = 1
 
 ##INICIO
 ### ¿Queremos hacer trampas?
-trampas = (str(input('¡Hola! ¿Te gusta hacer trampas? (Responde "SI" o "NO"): ')))
-if trampas == "SI":
-    trampas = True
+trampas_in = (str(input('¡Hola! ¿Te gustaría hacer trampas? (Responde "SI" o "NO"): ')))
+if trampas_in == "SI":
+    trampas_jg = True
 else:
-    trampas = False
+    trampas_jg = False
 
 ### Creamos 3 tableros
 tablero_user = ut.crear_tablero()
@@ -26,4 +26,4 @@ tablero_user = ut.colocar_barcos(barcos_user,tablero_user)
 tablero_rival = ut.colocar_barcos(barcos_rival,tablero_rival)
 
 ### Pruebas turnos
-ut.turnos(tablero_user,tablero_rival,tablero_rival_oc,jugador,turnos)
+ut.turnos(tablero_user,tablero_rival,tablero_rival_oc,jugador,turnos,trampas_jg)
