@@ -100,6 +100,7 @@ def colocar_barcos(barcos,tablero):
 
 
 ###TODO Meter tiempo para que sea algo mejor
+###TODO Seguro que se puede comprimir el código de la lógica de turnos. Mucho código repetido
 def turnos(tablero_us,tablero_rv,tablero_rv_oc,jugador,turnos,trampas):
     trampa = trampas
     us_punt = 0
